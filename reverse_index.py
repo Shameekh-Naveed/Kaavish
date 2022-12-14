@@ -3,6 +3,15 @@ import json
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+
+def sorter(dictionary,key,listPos){
+    if(listPos==0) return
+    if(dictionary[key][listPos][0][1] > dictionary[key][listPos-1][0][1]):   #basically trying to reach the power
+        temp = dictionary[key][listPos-1][0][1]
+        dictionary[key][listPos-1][0][1] = dictionary[key][listPos][0][1]
+        dictionary[key][listPos][0][1] = temp
+}
+
 def lemmatizer(pos_tags):
     lemmatizer = WordNetLemmatizer()
     keywords = []
@@ -54,17 +63,18 @@ for i in range(len(json_data)):
         if(doc_list[j] not in keyword_dict and doc_list[j] not in stop_words):
             keyword_list.append(doc_list[j])
             keyword_dict[doc_list[j]] = []
-            keyword_dict[doc_list[j]].append([i,j])
-        elif(doc_list[j] in keyword_dict):
-            flag = False
+            keyword_dict[doc_list[j]].append([i,j])                     # i would be the document id while doc_list would be the list of words
+        elif(doc_list[j] in keyword_dict):                              # in that specific document. j would be the position and doc_list[j]
+            flag = False                                                # would be the word itself
             for k in range(len(keyword_dict[doc_list[j]])):
                 if(keyword_dict[doc_list[j]][k][0] == i):
                     keyword_dict[doc_list[j]][k].append(j)
                     flag = True
+                    break
             if flag == False:
                 keyword_dict[doc_list[j]].append([i,j])
     print(f"Document {i} done")
-    if (i==500):
+    if (i==100):
         break
 
 keyword_dict_json = json.dumps(keyword_dict, indent=1)
