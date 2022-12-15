@@ -38,38 +38,44 @@ keyword_dict = {}
 for i in range(len(json_data)):
     doc_list = tokenize(json_data[i]['title']+" "+json_data[i]['content'])
 
-    #commented this out to increase accuracy
-
-    # for j in doc_list:
-    #   if(j not in keyword_dict and j not in stop_words):
-    #     keyword_list.append(j)
-    #     keyword_dict[j] = []
-    #     keyword_dict[j].append((i,doc_list.index(j)))
-    #   elif(j in keyword_dict):
-    #     keyword_dict[j].append((i,doc_list.count(j)))
-    # print(f"Document {i} done")
-    # if (i==500):
-    #     break
     for j in range(len(doc_list)):
         if(doc_list[j] not in keyword_dict and doc_list[j] not in stop_words):
+
+            #append the new word to the keyword list
             keyword_list.append(doc_list[j])
+
+            #create a new entry in the dictionary
             keyword_dict[doc_list[j]] = []
-            keyword_dict[doc_list[j]].append([i,j])
-        elif(doc_list[j] in keyword_dict):
+
+            #append the document number and the position of the keyword in the document in a list
+            #separately
+            keyword_dict[doc_list[j]].append([[i],[j]])
+
+        # format
+        # "moscow" : [
+        #   [[1],[2,3,4,5]],
+        #   [[3],[1,2,3,4,5]]
+        # ]
+
+
+        elif(doc_list[j] in keyword_dict): #if the word is already in the dictionary
             flag = False
             for k in range(len(keyword_dict[doc_list[j]])):
-                if(keyword_dict[doc_list[j]][k][0] == i):
-                    keyword_dict[doc_list[j]][k].append(j)
+
+                if(keyword_dict[doc_list[j]][k][0][0] == i):
+                    keyword_dict[doc_list[j]][k][1].append(j)
                     flag = True
+                    break
             if flag == False:
-                keyword_dict[doc_list[j]].append([i,j])
+                keyword_dict[doc_list[j]].append([[i],[j]])
+
     print(f"Document {i} done")
-    if (i==500):
+    if (i==50):
         break
 
 keyword_dict_json = json.dumps(keyword_dict, indent=1)
 print("Done")
 
-with open("reverse2.json","w") as myFile:
+with open("reverse.json","w") as myFile:
     myFile.write(keyword_dict_json)
     
