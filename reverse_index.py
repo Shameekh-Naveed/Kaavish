@@ -3,6 +3,7 @@ import json
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
+
 def lemmatizer(pos_tags):
     lemmatizer = WordNetLemmatizer()
     keywords = []
