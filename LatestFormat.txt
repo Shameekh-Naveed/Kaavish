@@ -1,11 +1,11 @@
 
 {
     "moscow":[
-        [["docId2","power7"],["length title",1,3],["length",pos1,pos2]]
-        [["docId1","power4"],["length title",1,3,"length",pos1,pos2]],
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
     ],
     "laptopo":[
-        [["docId","power"],["length title",1,3],["length",pos1,pos2]],
+        [["docId","power"],[1,3],["length",pos1,pos2]],
         [["docId","power"],["length title",1,3],["length",pos1,pos2]]
     ],
     "arigasd":[

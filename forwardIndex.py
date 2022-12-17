@@ -1,9 +1,12 @@
 import nltk
 import json
+import time
 from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re  # used to remove punctuation and special characters
+
+start = time.perf_counter()
 
 
 def lemmatizer(pos_tags):
@@ -20,7 +23,8 @@ def lemmatizer(pos_tags):
 def tokenize(sentence):
     sentence_tokens = nltk.word_tokenize(sentence.lower())
     pos_tags = nltk.pos_tag(sentence_tokens)
-    keywords = lemmatizer(pos_tags)
+    # keywords = lemmatizer(pos_tags)
+    keywords = sentence.split(" ")
     return keywords
 
 # Declare root path and note all the present files in the dataset
@@ -37,7 +41,7 @@ stop_words = stopwords.words('english')
 stop_words.extend(['@', '\u2014', '.'])
 
 
-# Declare empty dictionary and populate it
+# Decflare empty dictionary and populate it
 keyword_dict = {}
 
 for file in files:
@@ -46,6 +50,8 @@ for file in files:
     json_data = json.load(filee)
     print(f"{file} started")
 
+    if ("cbsnews" not in filename):
+        continue
 
     for i in range(len(json_data)):
 
@@ -60,14 +66,17 @@ for file in files:
             if (doc_list[j] not in stop_words):
                 keyword_dict[i].append(doc_list[j])
 
-        if(i ==100):
+        if(i == 1000):
             break
         # print(f"Document {i} done")
         
         
 
 keyword_dict_json = json.dumps(keyword_dict, indent=2)
-print("Done")
+end = time.perf_counter()
+# find elapsed time in seconds
+ms = (end-start)
+print(f"Elapsed {ms:.03f}  secs.")
 
 with open("forward.json", "w") as myFile:
     myFile.write(keyword_dict_json)
