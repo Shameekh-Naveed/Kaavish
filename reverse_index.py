@@ -4,14 +4,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
 
-def sorter(dictionary,key,listPos){
-    if(listPos==0) return
-    if(dictionary[key][listPos][0][1] > dictionary[key][listPos-1][0][1]):   #basically trying to reach the power
-        temp = dictionary[key][listPos-1][0][1]
-        dictionary[key][listPos-1][0][1] = dictionary[key][listPos][0][1]
-        dictionary[key][listPos][0][1] = temp
-}
-
 def lemmatizer(pos_tags):
     lemmatizer = WordNetLemmatizer()
     keywords = []
@@ -45,34 +37,59 @@ keyword_list = []
 keyword_dict = {}
 
 for i in range(len(json_data)):
-    doc_list = tokenize(json_data[i]['title']+" "+json_data[i]['content'])
+    doc_list_title = tokenize(json_data[i]['title'])
+    doc_list_content = tokenize(json_data[i]['content'])
 
-    #commented this out to increase accuracy
+    for j in range(len(doc_list_title)):
+        if(doc_list_title[j] not in keyword_dict and doc_list_title[j] not in stop_words):
 
-    # for j in doc_list:
-    #   if(j not in keyword_dict and j not in stop_words):
-    #     keyword_list.append(j)
-    #     keyword_dict[j] = []
-    #     keyword_dict[j].append((i,doc_list.index(j)))
-    #   elif(j in keyword_dict):
-    #     keyword_dict[j].append((i,doc_list.count(j)))
-    # print(f"Document {i} done")
-    # if (i==500):
-    #     break
-    for j in range(len(doc_list)):
-        if(doc_list[j] not in keyword_dict and doc_list[j] not in stop_words):
-            keyword_list.append(doc_list[j])
-            keyword_dict[doc_list[j]] = []
-            keyword_dict[doc_list[j]].append([i,j])                     # i would be the document id while doc_list would be the list of words
-        elif(doc_list[j] in keyword_dict):                              # in that specific document. j would be the position and doc_list[j]
-            flag = False                                                # would be the word itself
-            for k in range(len(keyword_dict[doc_list[j]])):
-                if(keyword_dict[doc_list[j]][k][0] == i):
-                    keyword_dict[doc_list[j]][k].append(j)
+            #append the new word to the keyword list
+            keyword_list.append(doc_list_title[j])
+
+            #create a new entry in the dictionary
+            keyword_dict[doc_list_title[j]] = []
+
+            #append the document number and the position of the keyword in the document in a list
+            #separately
+            keyword_dict[doc_list_title[j]].append([[i,1],[j]])
+
+        elif(doc_list_title[j] in keyword_dict): #if the word is already in the dictionary
+            flag = False
+            for k in range(len(keyword_dict[doc_list_title[j]])):
+
+                if(keyword_dict[doc_list_title[j]][k][0][0] == i):
+                    keyword_dict[doc_list_title[j]][k][0][1] += 1
+                    keyword_dict[doc_list_title[j]][k][1].append(j)
                     flag = True
                     break
             if flag == False:
-                keyword_dict[doc_list[j]].append([i,j])
+                keyword_dict[doc_list_title[j]].append([[i,1],[j]])
+
+    for j in range(len(doc_list_content)):
+        if(doc_list_content[j] not in keyword_dict and doc_list_content[j] not in stop_words):
+
+            #append the new word to the keyword list
+            keyword_list.append(doc_list_content[j])
+
+            #create a new entry in the dictionary
+            keyword_dict[doc_list_content[j]] = []
+
+            #append the document number and the position of the keyword in the document in a list
+            #separately
+            keyword_dict[doc_list_content[j]].append([[i,0.5],[len(doc_list_title)+j]])
+
+        elif(doc_list_content[j] in keyword_dict): #if the word is already in the dictionary
+            flag = False
+            for k in range(len(keyword_dict[doc_list_content[j]])):
+
+                if(keyword_dict[doc_list_content[j]][k][0][0] == i):
+                    keyword_dict[doc_list_content[j]][k][0][1] += 0.5
+                    keyword_dict[doc_list_content[j]][k][1].append(len(doc_list_title)+j)
+                    flag = True
+                    break
+            if flag == False:
+                keyword_dict[doc_list_content[j]].append([[i,1],[len(doc_list_title)+j]])
+
     print(f"Document {i} done")
     if (i==100):
         break
@@ -80,6 +97,6 @@ for i in range(len(json_data)):
 keyword_dict_json = json.dumps(keyword_dict, indent=1)
 print("Done")
 
-with open("reverse2.json","w") as myFile:
+with open("reverseFin.json","w") as myFile:
     myFile.write(keyword_dict_json)
     
