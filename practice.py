@@ -55,7 +55,7 @@ def sorter(dictionary, key, listPos):
         i -= 1
 
 
-def insertKeyword(dictionary, array, wordPos):
+def insertKeyword(dictionary, array, wordPos, power):
     if (array[wordPos] not in dictionary and array[wordPos] not in stop_words):
 
         # append the new word to the keyword list
@@ -66,7 +66,7 @@ def insertKeyword(dictionary, array, wordPos):
 
         # append the document number and the position of the keyword in the document in a list
         # separately
-        dictionary[array[wordPos]].append([[filename, i, 1], [wordPos]])
+        dictionary[array[wordPos]].append([[filename, i, power], [wordPos]])
 
         # if the word is already in the dictionary
     elif (array[wordPos] in dictionary):
@@ -75,13 +75,13 @@ def insertKeyword(dictionary, array, wordPos):
         for k in range(len(dictionary[array[wordPos]])):
             counter += 1
             if (dictionary[array[wordPos]][k][0][1] == i):
-                dictionary[array[wordPos]][k][0][2] += 1
+                dictionary[array[wordPos]][k][0][2] += power
                 dictionary[array[wordPos]][k][1].append(wordPos)
                 flag = True
                 break
         if flag == False:
             dictionary[array[wordPos]].append(
-                [[filename, i, 1], [wordPos]])
+                [[filename, i, power], [wordPos]])
 
         sorter(dictionary, array[wordPos], counter)
 
@@ -114,11 +114,11 @@ for file in files:
 
         for j in range(len(doc_list_title)):
             if (doc_list_title[j] not in stop_words):
-                insertKeyword(keyword_dict, doc_list_title, j)
+                insertKeyword(keyword_dict, doc_list_title, j,2)
 
         for j in range(len(doc_list_content)):
             if (doc_list_content[j] not in stop_words):
-                insertKeyword(keyword_dict, doc_list_content, j)
+                insertKeyword(keyword_dict, doc_list_content, j,0.5)
 
         if (i == 100):
             break
