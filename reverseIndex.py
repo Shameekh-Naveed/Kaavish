@@ -110,6 +110,9 @@ for file in files:
                 insertKeyword(keyword_dict, doc_list_content,
                               j, 1)
 
+        if(i==300):
+            break
+
 
 keyword_dict_json = json.dumps(keyword_dict, indent=1)
 print("Done")
