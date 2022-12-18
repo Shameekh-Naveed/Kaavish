@@ -1,0 +1,17 @@
+mp
+{
+    "moscow":[
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
+    ],
+    "laptopo":[
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
+    ],
+    "arigasd":[
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
+    ],
+
+}
+
