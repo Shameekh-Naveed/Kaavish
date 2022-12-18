@@ -14,36 +14,18 @@ for i in file_objs:
     files.append(str(i))
 
 
-barrels = {
-    "commonNouns": [],
-    "properNouns": [],
-    "verbs": [],
-    "adjectives": [],
-    "adverbs": []
-}
-
-
 def lemmatizer(wordnet, pos_tags):
-    # lemmatizer = wordnet
     keywords = []
     for i in pos_tags:
-        # if (i[1][0].lower() in ['n', 'v', 'a', 'r']):
-        # print(i)
-        # keywords.append(wordnet.lemmatize(i[0], i[1][0].lower()))
         keywords.append(wordnet.lemmatize(i))
-        # else:
-        # keywords.append(wordnet.lemmatize(i[0]))
     return keywords
 
 
 def tokenize(wordnet, sentence):
     sentence_tokens = sentence.split(" ")
-    # pos_tags = nltk.pos_tag(sentence_tokens)
     pos_tags = sentence_tokens
-
     keywords = lemmatizer(wordnet, pos_tags)
     return keywords
-    # return keywords
 
 
 def sorter(dictionary, key, listPos):
@@ -61,15 +43,14 @@ def sorter(dictionary, key, listPos):
     listPos = i - 1
 
 
-def insertKeyword(dictionary, array, wordPos, power, currentPos):
+def insertKeyword(dictionary, array, wordPos, power):
     if (array[wordPos] in dictionary):
-        # ---------------------------------------------------------
         flag = False
         counter = -1
         for k in range(len(dictionary[array[wordPos]])):
             counter += 1
             if (dictionary[array[wordPos]][k][0][1] == i):
-                
+
                 dictionary[array[wordPos]][k][0][2] += power
                 dictionary[array[wordPos]][k][1].append(wordPos)
                 flag = True
@@ -78,32 +59,6 @@ def insertKeyword(dictionary, array, wordPos, power, currentPos):
             dictionary[array[wordPos]].append(
                 [[filename, i, power], [wordPos]])
         sorter(dictionary, array[wordPos], counter)
-        # ---------------------------------------------------------
-        # if(currentPos>=-1):
-        # flag = False
-        # counter = -1
-        # for k in range(len(dictionary[array[wordPos]])):
-        #     counter += 1
-        # if (dictionary[array[wordPos]][k][0][1] == i):
-        # cp = len(dictionary[array[wordPos]]) - 1
-        # if (currentPos > -1):
-        #     dictionary[array[wordPos]][currentPos][0][2] += power
-        #     dictionary[array[wordPos]][currentPos][1].append(wordPos)
-
-            # sorter(dictionary, array[wordPos], currentPos)
-
-        # else:
-        #     dictionary[array[wordPos]].append(
-        #         [[filename, i, power], [wordPos]])
-        #     currentPos = len([dictionary[array[wordPos]]]) - 1
-            
-        # sorter(dictionary, array[wordPos], currentPos)
-        # flag = True
-        # print(len(dictionary[array[wordPos]]) - counter)
-        # break
-        # if flag == False:
-        # dictionary[array[wordPos]].append(
-        #     [[filename, i, power], [wordPos]])
 
     else:
         # append the new word to the keyword list
@@ -115,7 +70,6 @@ def insertKeyword(dictionary, array, wordPos, power, currentPos):
         # append the document number and the position of the keyword in the document in a list
         # separately
         dictionary[array[wordPos]].append([[filename, i, power], [wordPos]])
-        currentPos = 0
 
 
 # create stopwords list
@@ -133,9 +87,6 @@ for file in files:
     json_data = json.load(filee)
     print(f"{file} started")
 
-    if ("cbs" not in filename):
-        continue
-
     for i in range(len(json_data)):  # i is the document number/ID
 
         doc_list_title = tokenize(wordnet, json_data[i]['title'])
@@ -149,7 +100,7 @@ for file in files:
                     tempDict[doc_list_title[j]] = -1
 
                 insertKeyword(keyword_dict, doc_list_title,
-                              j, 5, tempDict[doc_list_title[j]])
+                              j, 5)
 
         for j in range(len(doc_list_content)):
             if (doc_list_content[j] not in stop_words):
@@ -157,10 +108,7 @@ for file in files:
                     tempDict[doc_list_content[j]] = -1
 
                 insertKeyword(keyword_dict, doc_list_content,
-                              j, 1, tempDict[doc_list_content[j]])
-
-        if (i == 1000):
-            break
+                              j, 1)
 
 
 keyword_dict_json = json.dumps(keyword_dict, indent=1)
@@ -172,5 +120,5 @@ ms = (end-start)
 print(f"Elapsed {ms:.03f}  secs.")
 
 
-with open("tempX.json", "w") as myFile:
+with open("reverseIndex.json", "w") as myFile:
     myFile.write(keyword_dict_json)
