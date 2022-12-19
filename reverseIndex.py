@@ -110,7 +110,7 @@ for file in files:
                 insertKeyword(keyword_dict, doc_list_content,
                               j, 1)
 
-        if(i==300):
+        if(i==25):
             break
 
 
@@ -123,5 +123,5 @@ ms = (end-start)
 print(f"Elapsed {ms:.03f}  secs.")
 
 
-with open("reverseIndex.json", "w") as myFile:
+with open("reverseIndexTest.json", "w") as myFile:
     myFile.write(keyword_dict_json)

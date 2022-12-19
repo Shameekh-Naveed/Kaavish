@@ -25,7 +25,8 @@ def lemmatizer(wordnet, pos_tags):
 def tokenize(wordnet, sentence):
     sentence_tokens = sentence.split(" ")
     pos_tags = sentence_tokens
-    keywords = lemmatizer(wordnet, pos_tags)
+    # keywords = lemmatizer(wordnet, pos_tags)
+    keywords = pos_tags
     return keywords
 
 
@@ -37,7 +38,7 @@ forwardIndex = {}
 
 start = time.perf_counter()
 
-for file in files:
+for file in files:  # adjust this for filename
     filename = file.split('\\')[2]
     filee = open(file)
     json_data = json.load(filee)
@@ -46,46 +47,46 @@ for file in files:
     for i in range(len(json_data)):
 
         data = json_data[i]['title']+" "+json_data[i]['content']
-        clean_string = re.sub(r'[^\w\s]', '', data)
+        # clean_string = re.sub(r'[^\w\s]', '', data)
 
-        doc_list = tokenize(wordnet, clean_string)
+        # doc_list = tokenize(wordnet, clean_string)
+        doc_list = tokenize(wordnet, data)
 
         forwardIndex[i] = []
         for j in range(len(doc_list)):
             # duplication is allowed in forward index
             if (doc_list[j] not in stop_words):
                 forwardIndex[i].append(doc_list[j])
-    
-        if(i == 300):
-            break
 
 
 forwardIndexJSON = json.dumps(forwardIndex, indent=2)
+with open("findextemp.json", "w") as myFile:
+    myFile.write(forwardIndexJSON)
+
+forwardIndex = json.load(open("findextemp.json"))
+
 
 reverseIndex = {}
 
-for doc, wordList in forwardIndex.items():
-    counter = 0
-    filename = power = 0
-    tempWordList = []
+tempVar = 0
+tempList = []
+for doc in forwardIndex:
+    filename = power = 0  # make way for power and filename
     wordPosition = 0
-    for word in wordList:
+    for word in forwardIndex[doc]:
         if (word in reverseIndex):
-            if (word not in tempWordList):
-                reverseIndex[word].append([[filename, doc, power], [wordPosition]])
-                tempWordList.append(word)
+            if (reverseIndex[word][len(reverseIndex[word])-1][0][1] == doc):
+                reverseIndex[word][len(reverseIndex[word])-1][0][2] += 1
+                reverseIndex[word][len(reverseIndex[word])-1][1].append(wordPosition)
             else:
-                reverseIndex[word][len(reverseIndex[word]) - 1][1].append(wordPosition) 
+                reverseIndex[word].append([[filename, doc, power], [wordPosition]])
         else:
-            reverseIndex[word] = []
-            reverseIndex[word].append([[filename, doc, power], [wordPosition]])
-            tempWordList.append(word)
-
+            reverseIndex[word] = [[[filename, doc, power], [wordPosition]]]
         wordPosition+=1
+        
 
 
-
-reverseIndexJSON =  json.dumps(reverseIndex, indent=1)
+reverseIndexJSON = json.dumps(reverseIndex, indent=2)
 
 end = time.perf_counter()
 # find elapsed time in seconds
