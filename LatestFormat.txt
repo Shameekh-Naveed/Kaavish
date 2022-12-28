@@ -15,3 +15,8 @@ mp
 
 }
 
+
+"moscow":{
+doc1:[power,pos1,posn],
+docn:[power,pos1,posn]
+}
