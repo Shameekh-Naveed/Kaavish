@@ -1,17 +1,22 @@
-
+mp
 {
     "moscow":[
-        [["docId2","power7"],["length title",1,3],["length",pos1,pos2]]
-        [["docId1","power4"],["length title",1,3,"length",pos1,pos2]],
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
     ],
     "laptopo":[
-        [["docId","power"],["length title",1,3],["length",pos1,pos2]],
-        [["docId","power"],["length title",1,3],["length",pos1,pos2]]
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
     ],
     "arigasd":[
-        [["docId","power"],["length title",1,3],["length",pos1,pos2]],
-        [["docId","power"],["length title",1,3],["length",pos1,pos2]]
+        [["docId2","power7"],[1,3,pos1,pos2]]
+        [["docId1","power4"],[1,3,pos1,pos2]],
     ],
 
 }
 
+
+"moscow":{
+doc1:[power,pos1,posn],
+docn:[power,pos1,posn]
+}
