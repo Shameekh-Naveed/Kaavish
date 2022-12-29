@@ -22,28 +22,22 @@ for i in file_objs:
 
 def lemmatizer(wordnet, pos_tags):
     keywords = []
-    useful_tags = ["N","R","V"];
+    useful_tags = ["N", "R", "V", "J"]
     for i in pos_tags:
-        
-            print(i[0]+" "+i[1][0])
-            lematized_word = wordnet.lemmatize(i[0])
-            print(lematized_word)
-        
-        # lematized_word = wordnet.lemmatize(i[0])
-        # keywords.append(lematized_word)
-        
-    print(keywords)
+        if i[1][0] in useful_tags:
+            if i[1][0] == "J":
+                keywords.append(wordnet.lemmatize(i[0], pos="a"))
+            else:
+                keywords.append(wordnet.lemmatize(i[0], pos=i[1][0].lower()))
+        else:
+            keywords.append(wordnet.lemmatize(i[0]))
+    return keywords
 
 
 def tokenize(wordnet, sentence):
-    # sentence_tokens = sentence.split(" ")
-    sentence_tokens = nltk.word_tokenize(sentence)
-    pos_tags = nltk.pos_tag(sentence_tokens)
-    # print(pos_tags)
-    keywords = lemmatizer(wordnet, pos_tags)
-    
+    keywords = lemmatizer(wordnet, nltk.pos_tag(nltk.word_tokenize(sentence)))
     print(keywords)
-    # return keywords
+    return keywords
 
 
 def sorter(dictionary, key, wordDocIntersection):
@@ -85,7 +79,7 @@ for file in files:  # adjust this for filename
     for i in range(len(json_data)):
 
         data = json_data[i]["title"] + " " + json_data[i]["content"]
-        clean_string = re.sub(r'[^\w\s]', '', data)
+        clean_string = re.sub(r"[^\w\s]", "", data)
 
         doc_list = tokenize(wordnet, clean_string)
         # doc_list = tokenize(wordnet, data)
