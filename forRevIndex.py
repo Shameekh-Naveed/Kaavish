@@ -162,7 +162,7 @@ def addDoc(doc):
 
 start = time.perf_counter()
 
-# forwardIndex = forwardIndexer(files)
+forwardIndex = forwardIndexer(files)
 
 addDoc("./Dataset/newsdata/disclosetv.json")
 
