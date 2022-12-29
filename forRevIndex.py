@@ -8,7 +8,7 @@ from nltk.stem import WordNetLemmatizer
 
 nltk.download("stopwords")
 nltk.download("wordnet")
-
+nltk.download("averaged_perceptron_tagger")
 
 wordnet = WordNetLemmatizer()
 
@@ -22,17 +22,28 @@ for i in file_objs:
 
 def lemmatizer(wordnet, pos_tags):
     keywords = []
+    useful_tags = ["N","R","V"];
     for i in pos_tags:
-        keywords.append(wordnet.lemmatize(i))
-    return keywords
+        
+            print(i[0]+" "+i[1][0])
+            lematized_word = wordnet.lemmatize(i[0])
+            print(lematized_word)
+        
+        # lematized_word = wordnet.lemmatize(i[0])
+        # keywords.append(lematized_word)
+        
+    print(keywords)
 
 
 def tokenize(wordnet, sentence):
-    sentence_tokens = sentence.split(" ")
-    pos_tags = sentence_tokens
+    # sentence_tokens = sentence.split(" ")
+    sentence_tokens = nltk.word_tokenize(sentence)
+    pos_tags = nltk.pos_tag(sentence_tokens)
+    # print(pos_tags)
     keywords = lemmatizer(wordnet, pos_tags)
-    # keywords = pos_tags
-    return keywords
+    
+    print(keywords)
+    # return keywords
 
 
 def sorter(dictionary, key, wordDocIntersection):
@@ -74,10 +85,10 @@ for file in files:  # adjust this for filename
     for i in range(len(json_data)):
 
         data = json_data[i]["title"] + " " + json_data[i]["content"]
-        # clean_string = re.sub(r'[^\w\s]', '', data)
+        clean_string = re.sub(r'[^\w\s]', '', data)
 
-        # doc_list = tokenize(wordnet, clean_string)
-        doc_list = tokenize(wordnet, data)
+        doc_list = tokenize(wordnet, clean_string)
+        # doc_list = tokenize(wordnet, data)
 
         docID = int(str(fileNum) + str(i))
 
