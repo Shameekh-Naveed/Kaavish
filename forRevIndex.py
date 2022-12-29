@@ -72,7 +72,8 @@ def forwardIndexer(files, fileNum=0):
             doc_list = tokenize(wordnet, clean_string)
             # doc_list = tokenize(wordnet, data)
 
-            docID = int(str(fileNum) + str(i))
+            docID = json_data[i]["url"]
+            # docID = int(str(fileNum) + str(i))
 
             forwardIndex[docID] = []
             for j in range(len(doc_list)):
