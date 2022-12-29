@@ -6,9 +6,9 @@ import time
 from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 
-nltk.download("stopwords")
-nltk.download("wordnet")
-nltk.download("averaged_perceptron_tagger")
+# nltk.download("stopwords")
+# nltk.download("wordnet")
+# nltk.download("averaged_perceptron_tagger")
 
 wordnet = WordNetLemmatizer()
 
@@ -91,7 +91,7 @@ for file in files:  # adjust this for filename
             if doc_list[j] not in stop_words:
                 forwardIndex[docID].append(doc_list[j])
 
-        if i == 1000:
+        if i == 50:
             print("km pay gya")
             break
 
@@ -118,7 +118,7 @@ for doc in forwardIndex:
     wordDocIntersection = {}
     for word in forwardIndex[doc]:
         if word not in wordDocIntersection:
-            wordDocIntersection[word] = 1
+            wordDocIntersection[word.lower()] = 1
 
         if counter < titleLength:
             power = 5
@@ -126,7 +126,7 @@ for doc in forwardIndex:
             power = 1
         counter += 1
         if word not in reverseIndex:
-            reverseIndex[word] = [[[doc, power], [wordPosition]]]
+            reverseIndex[word.lower()] = [[[doc, power], [wordPosition]]]
         else:
             if (
                 reverseIndex[word][len(reverseIndex[word]) - wordDocIntersection[word]][
@@ -159,23 +159,36 @@ taggedKeys = nltk.pos_tag(reverseKeys)
 
 binData = {}
 
-# format :
+# new format :
 # {
 #     "NN": {
-#         "word1": [doc1, doc2, doc3],
-#         "word2": [doc1, doc2, doc3],
-#         "word3": [doc1, doc2, doc3],
-#     }
+#         "a": {
+#             "word1": [doc1, doc2, doc3]
+#         }
+# }
 # }
 
 for taggedKey in taggedKeys:
+    # print(taggedKey)
     if taggedKey[1] in binData:
-        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+        if taggedKey[0][0] in binData[taggedKey[1]]:
+            binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+                taggedKey[0]
+            ]
+        else:
+            binData[taggedKey[1]][taggedKey[0][0]] = {}
+            binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+                taggedKey[0]
+            ]
+
     else:
         binData[taggedKey[1]] = {}
-        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+        binData[taggedKey[1]][taggedKey[0][0]] = {}
+        binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+            taggedKey[0]
+        ]
 
-
+# print(binData)
 end = time.perf_counter()
 # find elapsed time in seconds
 ms = end - start
@@ -185,6 +198,19 @@ with open("invertedIndex4.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
 
 # save the binData to a separate files
+Path("bins").mkdir(parents=True, exist_ok=True)
+
+print("Saving bins to files")
 for tag in binData:
-    with open("Bin_" + tag + ".json", "w") as f:
-        json.dump(binData[tag], f)
+    pos_folder = "bins/" + tag
+
+    Path(pos_folder).mkdir(parents=True, exist_ok=True)
+
+    for alphabet in binData[tag]:
+
+        alphabet_file = pos_folder + "/" + alphabet + ".json"
+
+        with open(alphabet_file, "w") as f:
+            json.dump(binData[tag][alphabet], f)
+            f.close()
+print("Done")
