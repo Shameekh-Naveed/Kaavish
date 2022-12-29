@@ -55,39 +55,39 @@ forwardIndex = {}
 start = time.perf_counter()
 fileNum = 0
 
-# for file in files:  # adjust this for filename
-#     filename = (file.split('\\')[2])[:-5]
-#     filee = open(file)
-#     json_data = json.load(filee)
-#     print(f"{file} started")
-#     fileNum += 1
+for file in files:  # adjust this for filename
+    filename = (file.split('\\')[2])[:-5]
+    filee = open(file)
+    json_data = json.load(filee)
+    print(f"{file} started")
+    fileNum += 1
 
-#     for i in range(len(json_data)):
+    for i in range(len(json_data)):
 
-#         data = json_data[i]['title']+" "+json_data[i]['content']
-#         # clean_string = re.sub(r'[^\w\s]', '', data)
+        data = json_data[i]['title']+" "+json_data[i]['content']
+        # clean_string = re.sub(r'[^\w\s]', '', data)
 
-#         # doc_list = tokenize(wordnet, clean_string)
-#         doc_list = tokenize(wordnet, data)
+        # doc_list = tokenize(wordnet, clean_string)
+        doc_list = tokenize(wordnet, data)
 
-#         docID = int(str(fileNum)+str(i))
+        docID = int(str(fileNum)+str(i))
 
-#         forwardIndex[docID] = []
-#         for j in range(len(doc_list)):
-#             # duplication is allowed in forward index
-#             if (doc_list[j] not in stop_words):
-#                 forwardIndex[docID].append(doc_list[j])
-
-#         if (i == 1000):
-#             print("km pay gya")
-#             break
+        forwardIndex[docID] = []
+        for j in range(len(doc_list)):
+            # duplication is allowed in forward index
+            if (doc_list[j] not in stop_words):
+                forwardIndex[docID].append(doc_list[j])
 
 
-# forwardIndexJSON = json.dumps(forwardIndex, indent=2)
-# with open("findextemp3.json", "w") as myFile:
-#     myFile.write(forwardIndexJSON)
+end = time.perf_counter()
+ms = (end-start)
+print(f"Forward index Elapsed {ms:.03f}  secs.")
 
-forwardIndex = json.load(open("findextemp3.json"))
+forwardIndexJSON = json.dumps(forwardIndex, indent=2)
+with open("forwardIndexLARGE.json", "w") as myFile:
+    myFile.write(forwardIndexJSON)
+
+forwardIndex = json.load(open("forwardIndexLARGE.json"))
 
 
 reverseIndex = {}
@@ -132,9 +132,8 @@ for doc in forwardIndex:
 reverseIndexJSON = json.dumps(reverseIndex, indent=2)
 
 end = time.perf_counter()
-# find elapsed time in seconds
 ms = (end-start)
 print(f"Elapsed {ms:.03f}  secs.")
 
-with open("invertedIndex4.json", "w") as myFile:
+with open("invertedIndexLARGE.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
