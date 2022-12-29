@@ -6,9 +6,6 @@ import time
 from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 
-nltk.download("stopwords")
-nltk.download("wordnet")
-nltk.download("averaged_perceptron_tagger")
 
 wordnet = WordNetLemmatizer()
 
