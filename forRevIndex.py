@@ -1,3 +1,7 @@
+# the paths are different for different systems
+# change the paths accordingly
+
+
 import re  # used to remove punctuation and special characters
 from nltk.corpus import stopwords
 import nltk
@@ -10,6 +14,7 @@ from nltk.stem import WordNetLemmatizer
 wordnet = WordNetLemmatizer()
 
 # Declare root path and note all the present files in the dataset
+# all the files go in the dataset folder
 root = Path("./Dataset/newsdata")
 file_objs = root.iterdir()
 files = []
@@ -30,10 +35,12 @@ def lemmatizer(wordnet, pos_tags):
             keywords.append(wordnet.lemmatize(i[0]))
     return keywords
 
+
 def tokenize(wordnet, sentence):
     wordList = sentence.split(" ")
     keywords = lemmatizer(wordnet, nltk.pos_tag(wordList))
     return keywords
+
 
 def sorter(dictionary, key, wordDocIntersection):
     if (wordDocIntersection == len(dictionary[key])):
@@ -49,6 +56,7 @@ def sorter(dictionary, key, wordDocIntersection):
         dictionary[key][temp2] = temp
         wordDocIntersection[key] += 1
         temp2 = len(dictionary[key]) - wordDocIntersection[key]
+
 
 def forwardIndexer(files, fileNum=0):
 
@@ -85,6 +93,7 @@ def forwardIndexer(files, fileNum=0):
                 break
 
     return forwardIndex
+
 
 def invertedIndexer(forwardIndex, reverseIndex={}):
     for doc in forwardIndex:
@@ -135,12 +144,14 @@ def invertedIndexer(forwardIndex, reverseIndex={}):
                         len(reverseIndex[word]) - wordDocIntersection[word]
                     ][1].append(wordPosition)
                 else:
-                    reverseIndex[word].append([[doc, str(power)], [wordPosition]])
+                    reverseIndex[word].append(
+                        [[doc, str(power)], [wordPosition]])
 
                 sorter(reverseIndex, word, wordDocIntersection)
 
             wordPosition += 1
     return reverseIndex
+
 
 def addDoc(doc):
     list = [doc]
@@ -187,32 +198,58 @@ taggedKeys = nltk.pos_tag(reverseKeys)
 
 binData = {}
 
-# format :
+# new format :
 # {
 #     "NN": {
-#         "word1": [doc1, doc2, doc3],
-#         "word2": [doc1, doc2, doc3],
-#         "word3": [doc1, doc2, doc3],
-#     }
+#         "a": {
+#             "word1": [doc1, doc2, doc3]
+#         }
+# }
 # }
 
 for taggedKey in taggedKeys:
+    # print(taggedKey)
     if taggedKey[1] in binData:
-        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+        if taggedKey[0][0] in binData[taggedKey[1]]:
+            binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+                taggedKey[0]
+            ]
+        else:
+            binData[taggedKey[1]][taggedKey[0][0]] = {}
+            binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+                taggedKey[0]
+            ]
+
     else:
         binData[taggedKey[1]] = {}
-        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+        binData[taggedKey[1]][taggedKey[0][0]] = {}
+        binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
+            taggedKey[0]
+        ]
 
-
+# print(binData)
 end = time.perf_counter()
 # find elapsed time in seconds
 ms = end - start
 print(f"Elapsed {ms:.03f}  secs.")
 
-with open("RIndexJ.json", "w") as myFile:
+with open("invertedIndex4.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
 
 # save the binData to a separate files
+Path("bins").mkdir(parents=True, exist_ok=True)
+
+print("Saving bins to files")
 for tag in binData:
-    with open("./barrels/Bin_" + tag + ".json", "w") as f:
-        json.dump(binData[tag], f)
+    pos_folder = "bins/" + tag
+
+    Path(pos_folder).mkdir(parents=True, exist_ok=True)
+
+    for alphabet in binData[tag]:
+
+        alphabet_file = pos_folder + "/" + alphabet + ".json"
+
+        with open(alphabet_file, "w") as f:
+            json.dump(binData[tag][alphabet], f)
+            f.close()
+print("Done")
