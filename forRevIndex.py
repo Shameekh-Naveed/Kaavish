@@ -68,7 +68,7 @@ fileNum = 0
 
 for file in files:  # adjust this for filename
     # filename = (file.split("\\")[2])[:-5] # for windows
-    filename = (file.split("/")[2])[:-5]  # for linux
+    # filename = (file.split("/")[2])[:-5]  # for linux
 
     filee = open(file)
     json_data = json.load(filee)
