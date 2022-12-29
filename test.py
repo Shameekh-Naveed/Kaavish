@@ -5,12 +5,13 @@ import json
 import time
 from pathlib import Path
 from nltk.stem import WordNetLemmatizer
-nltk.download('tagsets')
+
+nltk.download("tagsets")
 nltk.download("stopwords")
 nltk.download("wordnet")
 nltk.download("averaged_perceptron_tagger")
-nltk.download('punkt')
+nltk.download("punkt")
 
 wordnet = WordNetLemmatizer()
 
-nltk.help.upenn_tagset()
+print(nltk.pos_tag(["President"]))

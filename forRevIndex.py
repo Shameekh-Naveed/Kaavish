@@ -36,7 +36,6 @@ def lemmatizer(wordnet, pos_tags):
 
 def tokenize(wordnet, sentence):
     keywords = lemmatizer(wordnet, nltk.pos_tag(nltk.word_tokenize(sentence)))
-    print(keywords)
     return keywords
 
 
@@ -151,6 +150,32 @@ for doc in forwardIndex:
 
 reverseIndexJSON = json.dumps(reverseIndex, indent=2)
 
+# BIN CREATION
+
+# list of all the words in the dictionary
+reverseKeys = list(reverseIndex.keys())
+
+taggedKeys = nltk.pos_tag(reverseKeys)
+
+binData = {}
+
+# format :
+# {
+#     "NN": {
+#         "word1": [doc1, doc2, doc3],
+#         "word2": [doc1, doc2, doc3],
+#         "word3": [doc1, doc2, doc3],
+#     }
+# }
+
+for taggedKey in taggedKeys:
+    if taggedKey[1] in binData:
+        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+    else:
+        binData[taggedKey[1]] = {}
+        binData[taggedKey[1]][taggedKey[0]] = reverseIndex[taggedKey[0]]
+
+
 end = time.perf_counter()
 # find elapsed time in seconds
 ms = end - start
@@ -158,3 +183,8 @@ print(f"Elapsed {ms:.03f}  secs.")
 
 with open("invertedIndex4.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
+
+# save the binData to a separate files
+for tag in binData:
+    with open("Bin_" + tag + ".json", "w") as f:
+        json.dump(binData[tag], f)
