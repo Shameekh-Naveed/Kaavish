@@ -30,26 +30,25 @@ def lemmatizer(wordnet, pos_tags):
             keywords.append(wordnet.lemmatize(i[0]))
     return keywords
 
-
 def tokenize(wordnet, sentence):
-    keywords = lemmatizer(wordnet, nltk.pos_tag(nltk.word_tokenize(sentence)))
+    wordList = sentence.split(" ")
+    keywords = lemmatizer(wordnet, nltk.pos_tag(wordList))
     return keywords
 
-
 def sorter(dictionary, key, wordDocIntersection):
-    if wordDocIntersection == len(dictionary[key]):
+    if (wordDocIntersection == len(dictionary[key])):
         return
 
-    temp2 = len(dictionary[key]) - wordDocIntersection[word]
-    while temp2 > 1 and dictionary[key][temp2 - 1][0][1] < dictionary[key][temp2][0][1]:
-        if key == "Covid-19":
+    temp2 = len(dictionary[key]) - wordDocIntersection[key]
+    while (temp2 > 1 and float(dictionary[key][temp2 - 1][0][1]) < float(dictionary[key][temp2][0][1])):
+        if (key == "Covid-19"):
             pass
         temp = dictionary[key][temp2 - 1]
-        dictionary[key][temp2 - 1] = dictionary[key][temp2]
+        dictionary[key][temp2 -
+                        1] = dictionary[key][temp2]
         dictionary[key][temp2] = temp
-        wordDocIntersection[word] += 1
-        temp2 = len(dictionary[key]) - wordDocIntersection[word]
-
+        wordDocIntersection[key] += 1
+        temp2 = len(dictionary[key]) - wordDocIntersection[key]
 
 def forwardIndexer(files, fileNum=0):
 
@@ -86,7 +85,6 @@ def forwardIndexer(files, fileNum=0):
                 break
 
     return forwardIndex
-
 
 def invertedIndexer(forwardIndex, reverseIndex={}):
     for doc in forwardIndex:
@@ -145,26 +143,28 @@ def invertedIndexer(forwardIndex, reverseIndex={}):
     return reverseIndex
 
 def addDoc(doc):
-    fIndex = forwardIndexer(doc, 5)
+    list = [doc]
+    fIndex = forwardIndexer(list, 5)
     # Open existing forward index and modify it
-    ogForwardIndex = json.load(open("forwardIndexLARGE.json"))
-    ogForwardIndex.append(fIndex)
+    ogForwardIndex = json.load(open("FIndexJ.json"))
+    ogForwardIndex.update(fIndex)
     newForwardIndex = json.dumps(ogForwardIndex, indent=2)
-    with open("forwardIndexLARGE.json", "w") as myFile:
+    with open("FIndexJ.json", "w") as myFile:
         myFile.write(newForwardIndex)
 
     # Open existing inverted index and mofify it
-    ogInvertedIndex = json.load(open("invertedIndexLARGE.json"))
+    ogInvertedIndex = json.load(open("RIndexJ.json"))
     newInvertedIndex = invertedIndexer(fIndex, ogInvertedIndex)
     newInvertedIndex = json.dumps(ogInvertedIndex, indent=2)
-    with open("invertedIndexLARGE.json", "w") as myFile:
+    with open("RIndexJ.json", "w") as myFile:
         myFile.write(newInvertedIndex)
 
 
 start = time.perf_counter()
 
-forwardIndex = forwardIndexer(files)
+# forwardIndex = forwardIndexer(files)
 
+addDoc("./Dataset/newsdata/disclosetv.json")
 
 forwardIndexJSON = json.dumps(forwardIndex, indent=2)
 with open("FIndexJ.json", "w") as myFile:
@@ -209,10 +209,10 @@ end = time.perf_counter()
 ms = end - start
 print(f"Elapsed {ms:.03f}  secs.")
 
-with open("invertedIndex4.json", "w") as myFile:
+with open("RIndexJ.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
 
-# save the binData to a separate files
-for tag in binData:
-    with open("Bin_" + tag + ".json", "w") as f:
-        json.dump(binData[tag], f)
+# # # save the binData to a separate files
+# # for tag in binData:
+# #     with open("./barrels/Bin_" + tag + ".json", "w") as f:
+# #         json.dump(binData[tag], f)
