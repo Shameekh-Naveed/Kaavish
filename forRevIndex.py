@@ -211,6 +211,8 @@ binData = {}
 for taggedKey in taggedKeys:
     # print(taggedKey)
     if taggedKey[1] in binData:
+        if(len(taggedKey[0])== 0):
+            continue
         if taggedKey[0][0] in binData[taggedKey[1]]:
             binData[taggedKey[1]][taggedKey[0][0]][taggedKey[0]] = reverseIndex[
                 taggedKey[0]
@@ -249,8 +251,12 @@ for tag in binData:
     for alphabet in binData[tag]:
 
         alphabet_file = pos_folder + "/" + alphabet + ".json"
-
-        with open(alphabet_file, "w") as f:
-            json.dump(binData[tag][alphabet], f)
-            f.close()
+        try:
+            with open(alphabet_file, "w") as f:
+                json.dump(binData[tag][alphabet], f)
+                f.close()
+        
+        except:
+            pass
+        
 print("Done")

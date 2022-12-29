@@ -1,7 +1,22 @@
 import json
+from pathlib import Path
 # from builtins import set
 
-file = json.load(open("invertedIndexSmol.json"))
+file = json.load(open("RIndexJ.json"))
+
+# root = Path("./bins")
+# file_objs = root.iterdir()
+# barrels = {}
+# for i in file_objs:
+#     barrels.update(str(i))
+
+# for i in barrels.key():
+#     file_objs2 = barrels[i].iterdir()
+#     for j in file_objs2:
+#         barrels[i].append(str(j))
+
+# print(1)
+        
 
 
 def searchQuery(query, file):
