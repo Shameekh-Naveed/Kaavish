@@ -212,7 +212,7 @@ print(f"Elapsed {ms:.03f}  secs.")
 with open("RIndexJ.json", "w") as myFile:
     myFile.write(reverseIndexJSON)
 
-# # # save the binData to a separate files
-# # for tag in binData:
-# #     with open("./barrels/Bin_" + tag + ".json", "w") as f:
-# #         json.dump(binData[tag], f)
+# save the binData to a separate files
+for tag in binData:
+    with open("./barrels/Bin_" + tag + ".json", "w") as f:
+        json.dump(binData[tag], f)
